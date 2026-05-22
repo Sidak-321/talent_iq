@@ -1,0 +1,11 @@
+{
+  "name": "talentiq-compiler-service",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env src/index.js",
+    "start": "node --env-file=.env src/index.js"
+  },
+  "description": "Secure Docker-based code execution service for TalentIQ",
+  "license": "ISC"
+}
