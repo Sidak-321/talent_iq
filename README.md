@@ -108,7 +108,17 @@ npm run dev
 
 ### 4. Setup the Compiler Service
 
-Make sure Docker is running. The compiler service builds a **fresh Docker image for every code submission** — each run is fully isolated and destroyed after execution.
+Make sure Docker is running. The compiler service builds a **fresh Docker container for every code submission** — each run is fully isolated and destroyed after execution.
+
+First, pull the required Docker images for supported languages:
+
+```bash
+docker pull node:18-alpine       # JavaScript
+docker pull python:3.11-alpine   # Python
+docker pull gcc:13               # C++
+```
+
+Then start the compiler service:
 
 ```bash
 cd compiler_service
@@ -117,6 +127,7 @@ npm run dev
 ```
 
 > ⚠️ Docker must be running in the background for code execution to work.
+> ⏱️ First run may be slow as Docker spins up a fresh container per submission — this is by design for security.
 
 ### 5. Start Yjs WebSocket Server
 
