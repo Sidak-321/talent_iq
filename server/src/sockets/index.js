@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 
 import registerRoomHandlers from "./room.socket.js";
+import registerWebRTCHandlers from "./webrtc.socket.js";
 
 const initializeSocket = (server) => {
 
@@ -18,6 +19,7 @@ const initializeSocket = (server) => {
 
         // register room events
         registerRoomHandlers(io, socket);
+        registerWebRTCHandlers(io, socket);
 
         socket.on("disconnect", () => {
             console.log(`User Disconnected: ${socket.id}`);

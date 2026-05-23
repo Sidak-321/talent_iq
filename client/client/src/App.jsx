@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { io } from "socket.io-client";
 
+import CallRoom from "./components/call/CallRoom";
 import CodeEditor from "./components/CodeEditor";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -18,6 +19,7 @@ function App() {
     const [isRunning, setIsRunning] = useState(false);
 
     const roomId = "room1";
+    const username = "Sidak";
 
 
 
@@ -26,11 +28,11 @@ function App() {
 
         socket.emit("join-room", {
             roomId,
-            username: "Sidak"
+            username
         });
 
         return () => {
-            socket.emit("leave-room", { roomId, username: "Sidak" });
+            socket.emit("leave-room", { roomId, username });
         };
 
     }, []);
@@ -113,7 +115,13 @@ function App() {
                 roomId={roomId}
             />
 
-            <aside className="bg-[#181818] border-l border-gray-700 text-white flex flex-col min-h-0">
+            <aside className="bg-[#181818] border-l border-gray-700 text-white flex flex-col min-h-0 overflow-y-auto">
+                <CallRoom
+                    socket={socket}
+                    roomId={roomId}
+                    username={username}
+                />
+
                 <div className="p-4 border-b border-gray-700">
                     <label className="block text-sm text-gray-300 mb-2" htmlFor="stdin">
                         Input
@@ -123,11 +131,11 @@ function App() {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="stdin"
-                        className="w-full h-32 resize-none rounded bg-[#242424] border border-gray-700 p-3 text-sm outline-none focus:border-emerald-500"
+                        className="w-full h-24 resize-none rounded bg-[#242424] border border-gray-700 p-3 text-sm outline-none focus:border-emerald-500"
                     />
                 </div>
 
-                <div className="p-4 flex-1 min-h-0 flex flex-col">
+                <div className="p-4 min-h-72 flex flex-col">
                     <div className="flex items-center justify-between mb-2">
                         <h2 className="text-sm font-semibold text-gray-200">
                             Output
