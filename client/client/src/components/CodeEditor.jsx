@@ -10,7 +10,8 @@ export default function CodeEditor({
     code,
     setCode,
     language,
-    roomId
+    roomId,
+    onEditorMount
 }) {
 
     const providerRef = useRef(null);
@@ -29,6 +30,9 @@ export default function CodeEditor({
         const model = editor.getModel();
         bindingRef.current = new MonacoBinding(ytext, model, new Set([editor]), provider.awareness);
 
+        // sync initial text from model to React state
+        setCode(model.getValue());
+
         // keep React state synced to editor
         modelChangeRef.current = model.onDidChangeContent(() => {
             setCode(model.getValue());
@@ -36,6 +40,10 @@ export default function CodeEditor({
 
         providerRef.current = provider;
         ydocRef.current = ydoc;
+
+        if (onEditorMount) {
+            onEditorMount(editor, ytext);
+        }
 
         editor.onDidDispose(() => {
             modelChangeRef.current?.dispose();

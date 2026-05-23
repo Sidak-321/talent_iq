@@ -1,5 +1,7 @@
 // store { code, version } per room
 const roomCodes = new Map();
+const roomQuestions = new Map();
+const roomLanguages = new Map();
 
 const registerRoomHandlers = (io, socket) => {
 
@@ -26,6 +28,16 @@ const registerRoomHandlers = (io, socket) => {
         // send current code+version for the room to the newly joined socket
         const current = roomCodes.get(roomId) || { code: "", version: 0 };
         socket.emit("receive-code", { code: current.code, version: current.version });
+
+        // send current question if it exists
+        const currentQuestion = roomQuestions.get(roomId) || null;
+        if (currentQuestion) {
+            socket.emit("receive-question", currentQuestion);
+        }
+
+        // send current language if it exists
+        const currentLanguage = roomLanguages.get(roomId) || "javascript";
+        socket.emit("receive-language", currentLanguage);
     });
 
 
@@ -51,8 +63,6 @@ const registerRoomHandlers = (io, socket) => {
 
 
     // CODE CHANGE with optimistic locking (versioning)
-    // client should send the `version` it was based on. If it matches server's
-    // version we accept and increment; otherwise we ask the client to sync.
     socket.on("code-change", ({ roomId, code, version }) => {
 
         const current = roomCodes.get(roomId) || { code: "", version: 0 };
@@ -73,6 +83,27 @@ const registerRoomHandlers = (io, socket) => {
         }
     });
 
+    // QUESTION UPDATE
+    socket.on("question-update", ({ roomId, question }) => {
+        roomQuestions.set(roomId, question);
+        socket.to(roomId).emit("receive-question", question);
+    });
+
+    // LANGUAGE UPDATE
+    socket.on("language-update", ({ roomId, language }) => {
+        roomLanguages.set(roomId, language);
+        socket.to(roomId).emit("receive-language", language);
+    });
+
+    // CODE EXECUTION IN-PROGRESS BROADCAST
+    socket.on("execution-status", ({ roomId, isRunning, executor }) => {
+        socket.to(roomId).emit("receive-execution-status", { isRunning, executor });
+    });
+
+    // CODE EXECUTION RESULT BROADCAST
+    socket.on("execution-result-update", ({ roomId, result }) => {
+        socket.to(roomId).emit("receive-execution-result", result);
+    });
 };
 
 export default registerRoomHandlers;
