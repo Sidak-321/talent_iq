@@ -4,9 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/app.js",
-    "yjs-server": "node node_modules/y-websocket/bin/server.js 1234"
-  },
+  "dev": "nodemon src/app.js",
+  "start": "node src/app.js",
+  "yjs-server": "node node_modules/y-websocket/bin/server.js 1234"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
